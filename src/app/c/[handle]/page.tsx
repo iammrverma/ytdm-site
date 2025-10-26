@@ -10,33 +10,57 @@ import { Button } from "@/app/_components/ui/button";
 import { Badge } from "@/app/_components/ui/badge";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { getCreatorBySlug } from "@/lib/firebaseConfig";
 
 export default function CreatorProfile() {
   const { user, logout } = useAuth();
   const params = useParams();
-  const slug = params?.slug as string;
+  const slug = params?.handle as string;
+  if (!slug) console.log("no slug found");
+  const [creator, setCreator] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  const creator = {
-    name: user?.displayName ?? "Unknown Creator",
-    handle: slug ?? "@handle",
-    niche: "Tech",
-    subscribers: "1k–10k",
-    location: "India",
-    bio: "Building the future of tech — one collab at a time. Open to podcast talks, crossovers, and all things creative.",
-    openForCollab: true,
-    collabTypes: ["Podcast", "Crossover Video", "Giveaway"],
-    socials: {
-      email: "creator@email.com",
-      instagram: "@creator.ig",
-      discord: "creator#1234",
-      channel: "https://youtube.com/@creator",
-    },
-  };
+  // const creator = {
+  //   name: user?.displayName ?? "Unknown Creator",
+  //   handle: slug ?? "@handle",
+  //   niche: "Tech",
+  //   subscribers: "1k–10k",
+  //   location: "India",
+  //   bio: "Building the future of tech — one collab at a time. Open to podcast talks, crossovers, and all things creative.",
+  //   openForCollab: true,
+  //   collabTypes: ["Podcast", "Crossover Video", "Giveaway"],
+  //   socials: {
+  //     email: "creator@email.com",
+  //     instagram: "@creator.ig",
+  //     discord: "creator#1234",
+  //     channel: "https://youtube.com/@creator",
+  //   },
+  // };
 
-  const isOwnChannel =
-    user &&
-    slug &&
-    user.displayName?.toLowerCase().includes(slug.toLowerCase());
+  const isOwnChannel = creator && user?.uid === creator.id;
+
+  useEffect(() => {
+    if (!slug) return;
+
+    async function fetchCreator() {
+      setLoading(true);
+      const data = await getCreatorBySlug(slug);
+      console.log(data);
+      setCreator(data);
+      setLoading(false);
+    }
+
+    fetchCreator();
+  }, [slug]);
+
+  useEffect(()=>console.log(loading), [loading]);
+  useEffect(()=>console.log(creator), [creator]);
+
+  if (loading) return <p className="text-center mt-10">Loading profile...</p>;
+
+  if (!creator)
+    return <p className="text-center mt-10 text-red-500">Creator not found.</p>;
 
   return (
     <div className="relative min-h-screen bg-gradient-hero">
@@ -156,7 +180,7 @@ export default function CreatorProfile() {
                   Collab Types
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {creator.collabTypes.map((type) => (
+                  {creator.collabTypes.map((type: any) => (
                     <Badge key={type} variant="secondary" className="text-xs">
                       {type}
                     </Badge>

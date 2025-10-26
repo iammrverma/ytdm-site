@@ -7,7 +7,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { auth } from "@/lib/firebaseConfig";
+import { auth, createOrUpdateCreator } from "@/lib/firebaseConfig";
 import { signOut, type User } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
@@ -32,6 +32,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
       setLoading(false);
+      if (currentUser) {
+        // create user for first login
+        createOrUpdateCreator(currentUser);
+      }
     });
     return () => unsubscribe();
   }, []);
