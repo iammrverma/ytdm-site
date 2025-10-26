@@ -1,21 +1,15 @@
 "use client";
-
-import { useState } from "react";
 import CreatorCard from "@/app/_components/CreatorCard";
+import { useAuth } from "@/app/contexts/AuthContext";
 import { dummyCreators } from "@/app/lib/dummyCreators";
 import { useParams } from "next/navigation";
 
-// Fake logged-in user (later replace with NextAuth or your auth provider)
-const currentUser = {
-  handle: "techguru", // e.g. from session.user.handle
-};
-
 export default function CreatorProfile() {
+  const { user, logout } = useAuth();
   const params = useParams();
   const slug = params?.slug as string; // URL: /channel/[slug]
-  
-  // ✅ dynamic check: if visiting own channel
-  const isOwnChannel = currentUser?.handle === slug;
+
+  const isOwnChannel = false;
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-6">
@@ -29,13 +23,16 @@ export default function CreatorProfile() {
       {/* Avatar + Info */}
       <div className="flex flex-wrap items-center pr-4 gap-6 w-full">
         <img
-          src="https://i.pravatar.cc/150?img=50"
+          src={user?.photoURL ?? "https://i.pravatar.cc/150?img=50"}
           alt="profile"
           className="w-24 h-24 rounded-full border-4 border-white object-cover"
+          referrerPolicy="no-referrer"
         />
 
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold">Tech Guru</h1>
+          <h1 className="text-2xl font-bold">
+            {user?.displayName ?? "User Name"}
+          </h1>
           <p>
             {slug ?? "@handle"}
             <span className="text-gray-500 text-sm">
@@ -58,6 +55,7 @@ export default function CreatorProfile() {
                 <button className="bg-red-500 cursor-pointer text-white px-4 py-2 rounded-full hover:bg-red-600">
                   Pitch For Collab
                 </button>
+                <button onClick={logout}>Logout</button>
               </>
             )}
           </div>

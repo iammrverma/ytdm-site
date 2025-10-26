@@ -1,9 +1,7 @@
 "use client";
 import { useState } from "react";
-import { dummyCreators } from "../lib/dummyCreators";
-import CreatorCard from "../_components/CreatorCard";
-
-
+import { dummyCreators } from "@/app/lib/dummyCreators";
+import CreatorCard from "@/app/_components/CreatorCard";
 
 export default function CreatorFeed() {
   const [search, setSearch] = useState("");
