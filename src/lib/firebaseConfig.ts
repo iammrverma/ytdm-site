@@ -19,6 +19,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
+const ytProvider = new GoogleAuthProvider();
+ytProvider.addScope("https://www.googleapis.com/auth/youtube.readonly");
+
 // Firestore
 const db = getFirestore(app); // <-- THIS is your db
 
@@ -65,4 +68,4 @@ async function updateCreator(creatorId: string, updates: any) {
   await setDoc(creatorRef, updates, { merge: true });
 }
 
-export { auth, provider, db, createOrUpdateCreator, getCreatorBySlug, updateCreator };
+export { auth, provider, ytProvider, db, createOrUpdateCreator, getCreatorBySlug, updateCreator };
