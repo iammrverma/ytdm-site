@@ -60,4 +60,9 @@ async function getCreatorBySlug(slug: string) {
   return null;
 }
 
-export { auth, provider, db, createOrUpdateCreator, getCreatorBySlug };
+async function updateCreator(creatorId: string, updates: any) {
+  const creatorRef = doc(db, "creators", creatorId);
+  await setDoc(creatorRef, updates, { merge: true });
+}
+
+export { auth, provider, db, createOrUpdateCreator, getCreatorBySlug, updateCreator };
